@@ -9,6 +9,6 @@ import java.io.IOException;
  */
 public class test {
     public static void main(String[] args) throws IOException {
-        RateSpider.getRateSTR("http://item.taobao.com/item.htm?id=19945802022");
+        RateSpider.getRateSTR("http://item.taobao.com/item.htm?id=19945802022",10);
     }
 }
