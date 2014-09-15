@@ -9,6 +9,6 @@ import java.io.IOException;
  */
 public class test {
     public static void main(String[] args) throws IOException {
-        RateSpider.getRateSTR("http://item.taobao.com/item.htm?id=19945802022",10);
+        RateSpider.getRateByURL("http://detail.tmall.com/item.htm?spm=a230r.1.14.2.FCUKge&id=40347673269&ad_id=&am_id=&cm_id=140105335569ed55e27b&pm_id=&sku_properties=", 0);
     }
 }

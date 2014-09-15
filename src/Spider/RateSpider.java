@@ -1,5 +1,6 @@
 package Spider;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
  * Created by ITTC-Jayvee on 2014/9/15.
  */
 public class RateSpider {
-    public static void getRateSTR(String URL, int maxPage) throws IOException {
+    public static void getRateByURL(String URL, int maxPage) throws IOException {
         //首先分析所给的URL，获取其中的商品ID
         String itemID = null;
         Matcher m = Pattern.compile("id=\\d{5,}").matcher(URL);
@@ -34,7 +35,7 @@ public class RateSpider {
         }
         //首先读取整个商品页面，获取其中的sellerID
         String sellerID = null;
-        Document itemDoc = Jsoup.connect(URL).get();
+        Document itemDoc = Jsoup.connect(URL).timeout(5000).get();
         String itemHTML = itemDoc.html();
         m = Pattern.compile("sellerId:\"\\d{1,}").matcher(itemHTML);
         if (m.find()) {
@@ -43,7 +44,7 @@ public class RateSpider {
             System.out.println("sellerId读取错误！");
             System.exit(-1);
         }
-        String itemName = itemDoc.select("title").text().replaceAll("-淘宝网", "");
+        String itemName = itemDoc.select("title").text().replaceAll("(-淘宝网)|(\\s)|-", "");
         System.out.println(itemName);
 
 
@@ -64,6 +65,7 @@ public class RateSpider {
         JSONArray commentList = new JSONArray();
         do {
             Long time = System.currentTimeMillis();
+            System.out.println("正在读取第" + pageNum + "页评价");
             JSONArray rateList = getRateList(itemID, sellerID, pageNum);
             time = System.currentTimeMillis() - time;
             System.out.println("用时：" + time + "ms\t休眠" + time / 2 + "ms");
@@ -82,7 +84,7 @@ public class RateSpider {
                     }
                 }
             } else {
-                System.out.println("调用了一个未存在的界面");
+                System.out.println("pageNum=" + pageNum + "\t调用了一个未存在的界面");
                 hasNextPage = false;
             }
             if (maxPage != 0) {
@@ -100,7 +102,7 @@ public class RateSpider {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        FileOutputStream fos = new FileOutputStream(new File(itemName + "-" + System.currentTimeMillis() + ".txt"));
+        FileOutputStream fos = new FileOutputStream(new File(System.currentTimeMillis() + ".txt"));
         fos.write(root.toString().getBytes("utf-8"));
 //        System.out.println(commentList.toString());
     }
@@ -125,17 +127,17 @@ public class RateSpider {
         //读取原始html文本，并对超时进行异常处理
         Document doc = null;
         try {
-            doc = Jsoup.connect(rateURL).data(data).timeout(10000).get();
+            doc = Jsoup.connect(rateURL).data(data).timeout(5000).get();
         } catch (SocketTimeoutException ste1) {
             System.out.println("连接超时，3秒后进行第一次重连");
             try {
                 Thread.sleep(3000);
-                doc = Jsoup.connect(rateURL).data(data).timeout(10000).get();
+                doc = Jsoup.connect(rateURL).data(data).timeout(5000).get();
             } catch (SocketTimeoutException ste2) {
                 System.out.println("连接超时，3秒后进行第二次重连");
                 try {
                     Thread.sleep(3000);
-                    doc = Jsoup.connect(rateURL).data(data).timeout(10000).get();
+                    doc = Jsoup.connect(rateURL).data(data).timeout(5000).get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -159,12 +161,48 @@ public class RateSpider {
         }
         JSONTokener jsonTokener = new JSONTokener(docSTR);
         JSONObject rootJSON = null;
-        JSONArray commentList = null;
+        JSONArray commentList;
 //        try {
         try {
             rootJSON = (JSONObject) jsonTokener.nextValue();
         } catch (JSONException e) {
-            e.printStackTrace();
+            System.out.println("读取第" + pageNum + "页评价时发生JSON格式错误！");
+            System.out.println(docSTR);
+//            e.printStackTrace();
+            //一般是因为content项中存在多余的“”
+            //处理json文本中的多余引号
+            Matcher content_matcher = Pattern.compile("(\"content\":.*?,\")").matcher(docSTR);
+            StringBuffer strBuffer = new StringBuffer();
+            while (content_matcher.find()) {
+                String content = content_matcher.group();
+                Matcher m1 = Pattern.compile("\"").matcher(content);
+                int count = 0;
+                while (m1.find()) {
+                    count++;
+                }
+                if (count > 5) {
+                    System.out.println(content);
+                    StringBuffer sb = new StringBuffer();
+                    Matcher q = Pattern.compile("\"").matcher(content);
+                    for (int i = 0; i < count; i++) {
+                        if (q.find() && i > 2 && i < (count - 2)) {
+                            q.appendReplacement(sb, "'");
+                            System.out.println("替换后的字符串:" + sb);
+                        }
+                    }
+                    q.appendTail(sb);
+                    System.out.println("最终字符串：" + sb);
+                    content_matcher.appendReplacement(strBuffer, sb.toString());
+                    content_matcher.appendTail(strBuffer);
+                    docSTR = strBuffer.toString();
+                }
+            }
+            jsonTokener = new JSONTokener(docSTR);
+            try {
+                rootJSON = (JSONObject) jsonTokener.nextValue();
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
         }
         commentList = rootJSON.optJSONArray("comments");
 //        } catch (JSONException e) {
