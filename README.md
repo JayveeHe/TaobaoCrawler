@@ -19,13 +19,7 @@ TaobaoCrawler
 
 ####**注意事项**
 1. 返回的JSON格式
-| Key        | 类型          | 备注  |
-| ------------- |:-------------:| -----:|
-| rateList      | JSONArray | 详细的评价列表|
-| itemName      | String|   商品名称 |
-| itemID | String     |    商品ID |
-| sellerID | String     |    卖家ID |
-| taskTime | String     |    符合Date.toString格式的任务开始时间 |
+![](https://d1zjcuqflbd5k.cloudfront.net/files/acc_294905/hJRm?response-content-disposition=inline;%20filename=QQ20140922103924.png&Expires=1411353807&Signature=WZ0iFOmJSrK4Iew3f30JPF0QszBhiIW6tyHn9uqae2K4SmK2rhz4VZSA~Vta3Cmq5pN5kVCVdQA7INgG7xYOOdlCm2wuTW7fQzJOzN55uXm2rEmACgRhLOsN8TzuddValmXi~GpyxmnqQ6w7naWm9-qWf-F05a~sMYVRP2Te5Q8_&Key-Pair-Id=APKAJTEIOJM3LSMN33SA)
 2. 关于健壮性
 还未考虑验证码、封IP、多线程等问题
 
