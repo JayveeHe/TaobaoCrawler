@@ -114,8 +114,8 @@ public class RateSpider {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        FileOutputStream fos = new FileOutputStream(new File(itemName + "-" + System.currentTimeMillis() + ".txt"));
-        fos.write(root.toString().getBytes("utf-8"));
+//        FileOutputStream fos = new FileOutputStream(new File(itemName + "-" + System.currentTimeMillis() + ".txt"));
+//        fos.write(root.toString().getBytes("utf-8"));
 //        System.out.println(commentList.toString());
         return root;
     }
