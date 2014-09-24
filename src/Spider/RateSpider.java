@@ -134,7 +134,7 @@ public class RateSpider {
         Map<String, String> data = new HashMap<String, String>();
         data.put("auctionNumId", auctionNumId);
         data.put("currentPageNum", pageNum + "");
-//        data.put("ShowContent", "1");//只显示有内容的评价
+        data.put("ShowContent", "1");//只显示有内容的评价
 //        data.put("order", "1");//排序规则，1为最近排序
         data.put("userNumId", userNumId);
         //读取原始html文本，并对超时进行异常处理
@@ -209,16 +209,17 @@ public class RateSpider {
                     for (int i = 0; i < count; i++) {
                         if (q.find() && i > 2 && i < (count - 2)) {
                             q.appendReplacement(sb, "'");
-                            System.out.println("替换后的字符串:" + sb);
+//                            System.out.println("替换后的字符串:" + sb);
                         }
                     }
                     q.appendTail(sb);
-                    System.out.println("最终字符串：" + sb);
+//                    System.out.println("最终字符串：" + sb);
                     content_matcher.appendReplacement(strBuffer, sb.toString());
-                    content_matcher.appendTail(strBuffer);
-                    docSTR = strBuffer.toString();
+
                 }
             }
+            content_matcher.appendTail(strBuffer);
+            docSTR = strBuffer.toString();
             jsonTokener = new JSONTokener(docSTR);
             try {
                 rootJSON = (JSONObject) jsonTokener.nextValue();
