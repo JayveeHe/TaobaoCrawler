@@ -19,7 +19,7 @@ TaobaoCrawler
 
 ####**注意事项**
 1. 返回的JSON格式
-![](https://d1zjcuqflbd5k.cloudfront.net/files/acc_294905/hJRm?response-content-disposition=inline;%20filename=QQ20140922103924.png&Expires=1411353807&Signature=WZ0iFOmJSrK4Iew3f30JPF0QszBhiIW6tyHn9uqae2K4SmK2rhz4VZSA~Vta3Cmq5pN5kVCVdQA7INgG7xYOOdlCm2wuTW7fQzJOzN55uXm2rEmACgRhLOsN8TzuddValmXi~GpyxmnqQ6w7naWm9-qWf-F05a~sMYVRP2Te5Q8_&Key-Pair-Id=APKAJTEIOJM3LSMN33SA)
+![](http://ww3.sinaimg.cn/large/64e1f62cjw1el6hb2414qj20hu06faa6.jpg)
 2. 关于健壮性
 还未考虑验证码、封IP、多线程等问题
 
